@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>hatzerim</title>
+   	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"> <!-- Load leaflet.css from web-->
+	<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script> <!-- Load leaflet.java.script from web-->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!-- with this the web will work good on any mobile devices-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> <!--Load Jquery -->
+	<script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+    </head>
+	
+	<style>
+	body 
+	{
+		padding: 0;
+		margin: 0;	
+		background-color: #99ccff
+;
+
+	}
+	html, body, #map 
+	{
+		height: 100%;
+		width: 100%;
+	}
+	
+	#map
+	{
+		width: 100%;
+	}
+	
+#homes_select, #homes_select_2 {
+            width: 100%;
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background-color: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+
+	.dropdown h3 {
+            margin: 5px 0px 0px 0px;
+        }
+		.dropdown {
+            min-width: 15em;
+            padding: 5px 10px 10px 10px;
+            background-color: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 7px;
+        }
+	
+	</style>
+	
+	
+    <body>
+        <h1>This is the main heading</h1>
+        <p>This is a paragraph.</p>
+		<!--this is comment-->
+	<select size="1" name="cars" id="select" onChange="showAlert()">
+		<option value="volvo">Volvo</option>
+		<option value="suzuki">Suzuki</option>
+		<option value="fiat">Fiat</option>
+		<option value="audi">Audi</option>
+	</select>
+	<p>
+	
+	<select size="1" onChange="showAlert2()" id="dataCountry" name="Test_Data">
+        <option selected value="Select One">Select One</option>
+        <option value="Data1">IN-Data1</option>
+        <option value="Data2">IN-Data2</option>
+        <option value="Data3">IN-Data3</option>
+        <option value="Data4">AUS-Data4</option>
+        <option value="Data5">AUS-Data5</option>
+        <option value="Data6">US-Data6</option>
+        <option value="Data7">US-Data7</option>
+ </select>
+ 
+ 
+ 
+ <p>
+ 	<select id="readGeoJson" name="readGeoJson">
+        <option selected value="Select One">Select One</option>
+        <option value="Data1">IN-Data1</option>
+        <option value="Data2">IN-Data2</option>
+        <option value="Data3">IN-Data3</option>
+        <option value="Data4">AUS-Data4</option>
+        <option value="Data5">AUS-Data5</option>
+        <option value="Data6">US-Data6</option>
+        <option value="Data7">US-Data7</option>
+		<option value="Data8">roads</option>
+
+ </select>
+
+<div id="map"></div>
+
+	
+	<script>
+// this is alert for the first dropdown
+function showAlert() {
+var el = document.getElementById('select');  // get the index
+var text = el.options[el.selectedIndex].innerHTML; // get the label
+var n = text.search("V");  //search number of IN
+if(n>=0) {
+alert(text);    
+}
+}
+
+// this is alert for the second dropdown
+function showAlert2() {
+var el = document.getElementById('dataCountry');  // get the index
+var text = el.options[el.selectedIndex].innerHTML; // get the label
+var n = text.search("IN");  //search number of IN
+if(n>=0) {
+alert(text);    
+}
+}
+
+
+
+
+// this is another way to alert by condition of the first dropdown
+$("#select").change(function(){  
+if($(this).find("option:selected").text().startsWith("V")){    
+alert("option with IN selected =>"+$(this).find("option:selected").text());
+}
+});
+
+
+
+
+
+
+
+
+
+
+
+
+// all this from the index:
+var map = L.map("map").setView([31.2390, 34.715], 17);
+var geojson_roads;
+var geojson_homes;
+
+var roadsLayer = L.layerGroup().addTo(map); // this is for function to update the homes that displayed by the dropdown1
+
+var homesLayer_2 = L.layerGroup().addTo(map); // this is for function to update the homes that displayed by the dropdown2
+
+
+//background map
+var imagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    }).addTo(map); 
+	
+	
+	
+	
+	
+// this is try to load the roads.geojson file if it chosen in the dropdown
+$("#readGeoJson").change(function(){  
+if($(this).find("option:selected").text().startsWith("roads"))
+{    
+	$.getJSON //with this i get the geojson roads, in style i define colors of the roads
+(
+	"roads.geojson", function(data)
+	{
+	L.geoJSON(data, 
+		{
+			style: {weight: 5, color: "yellow"}
+		}
+		).addTo(roadsLayer);
+	}
+);
+}
+else
+{
+	roadsLayer.clearLayers();
+
+}
+});
+	</script>
+
+
+
+
+
+
+    </body>
+</html>
